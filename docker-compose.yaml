@@ -7,7 +7,7 @@ services:
     ports:
       - 8001:8000
     environment:
-      - DATABASE_URI=postgresql://postgres:password@movie_db/movie_db?sslmode=disable
+      - - DATABASE_URI=postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}/${MOVIE_DATABASE_NAME}?sslmode=${DATABASE_SSL_MODE}
       - CAST_SERVICE_HOST_URL=http://cast_service:8000/api/v1/casts/
 
   movie_db:
@@ -15,9 +15,9 @@ services:
     volumes:
       - postgres_data_movie:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=movie_db
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${MOVIE_DATABASE_NAME}
 
   cast_service:
     build: ./cast-service
@@ -27,16 +27,16 @@ services:
     ports:
       - 8002:8000
     environment:
-      - DATABASE_URI=postgresql://postgres:password@cast_db/cast_db?sslmode=disable
+      - DATABASE_URI=postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}/${CAST_DATABASE_NAME}?sslmode=${DATABASE_SSL_MODE}
 
   cast_db:
     image: postgres:17-alpine
     volumes:
       - postgres_data_cast:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=cast_db
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${CAST_DATABASE_NAME}
 
   nginx:
     image: nginx:latest
